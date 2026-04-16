@@ -1,3 +1,4 @@
+from . import orders, order_details, recipes, sandwiches, resources, menu_items
 from . import orders, order_details, recipes, resources, sandwiches
 from . import customers, food_categories, ingredients, promotions
 
@@ -13,4 +14,6 @@ def index():
     order_details.Base.metadata.create_all(engine)
     recipes.Base.metadata.create_all(engine)
     resources.Base.metadata.create_all(engine)
+    menu_items.Base.metadata.create_all(engine)
+
     sandwiches.Base.metadata.create_all(engine)
