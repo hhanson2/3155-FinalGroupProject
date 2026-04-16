@@ -1,68 +1,51 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
-from ..models import orders as model
-from sqlalchemy.exc import SQLAlchemyError
+from ..models import models, schemas
 
 
-def create(db: Session, request):
-    new_item = model.Order(
-        customer_name=request.customer_name,
-        description=request.description
+def create(db: Session, order):
+    # Create a new instance of the Order model with the provided data
+    db_order = models.Order(
+        customer_name=order.customer_name,
+        description=order.description
     )
-
-    try:
-        db.add(new_item)
-        db.commit()
-        db.refresh(new_item)
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-
-    return new_item
+    # Add the newly created Order object to the database session
+    db.add(db_order)
+    # Commit the changes to the database
+    db.commit()
+    # Refresh the Order object to ensure it reflects the current state in the database
+    db.refresh(db_order)
+    # Return the newly created Order object
+    return db_order
 
 
 def read_all(db: Session):
-    try:
-        result = db.query(model.Order).all()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
+    return db.query(models.Order).all()
 
 
-def read_one(db: Session, item_id):
-    try:
-        item = db.query(model.Order).filter(model.Order.id == item_id).first()
-        if not item:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return item
+def read_one(db: Session, order_id):
+    return db.query(models.Order).filter(models.Order.id == order_id).first()
 
 
-def update(db: Session, item_id, request):
-    try:
-        item = db.query(model.Order).filter(model.Order.id == item_id)
-        if not item.first():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-        update_data = request.dict(exclude_unset=True)
-        item.update(update_data, synchronize_session=False)
-        db.commit()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return item.first()
+def update(db: Session, order_id, order):
+    # Query the database for the specific order to update
+    db_order = db.query(models.Order).filter(models.Order.id == order_id)
+    # Extract the update data from the provided 'order' object
+    update_data = order.model_dump(exclude_unset=True)
+    # Update the database record with the new data, without synchronizing the session
+    db_order.update(update_data, synchronize_session=False)
+    # Commit the changes to the database
+    db.commit()
+    # Return the updated order record
+    return db_order.first()
 
 
-def delete(db: Session, item_id):
-    try:
-        item = db.query(model.Order).filter(model.Order.id == item_id)
-        if not item.first():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-        item.delete(synchronize_session=False)
-        db.commit()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+def delete(db: Session, order_id):
+    # Query the database for the specific order to delete
+    db_order = db.query(models.Order).filter(models.Order.id == order_id)
+    # Delete the database record without synchronizing the session
+    db_order.delete(synchronize_session=False)
+    # Commit the changes to the database
+    db.commit()
+    # Return a response with a status code indicating success (204 No Content)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
