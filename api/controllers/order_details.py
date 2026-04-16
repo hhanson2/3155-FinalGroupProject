@@ -1,69 +1,51 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
-from ..models import order_details as model
-from sqlalchemy.exc import SQLAlchemyError
+from ..models import order_details as order_details_model
 
-
-def create(db: Session, request):
-    new_item = model.OrderDetail(
-        order_id=request.order_id,
-        sandwich_id=request.sandwich_id,
-        amount=request.amount
+def create(db: Session, order_details):
+    # Create a new instance of the OrderDetail model with the provided data
+    db_order_details = order_details_model.OrderDetail(
+        amount=order_details.amount,
+        order_id=order_details.order_id,
+        sandwich_id=order_details.sandwich_id
     )
-
-    try:
-        db.add(new_item)
-        db.commit()
-        db.refresh(new_item)
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-
-    return new_item
+    # Add the newly created OrderDetail object to the database session
+    db.add(db_order_details)
+    # Commit the changes to the database
+    db.commit()
+    # Refresh the OrderDetail object to ensure it reflects the current state in the database
+    db.refresh(db_order_details)
+    # Return the newly created OrderDetail object
+    return db_order_details
 
 
 def read_all(db: Session):
-    try:
-        result = db.query(model.OrderDetail).all()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
+    return db.query(order_details_model.OrderDetail).all()
 
 
-def read_one(db: Session, item_id):
-    try:
-        item = db.query(model.OrderDetail).filter(model.OrderDetail.id == item_id).first()
-        if not item:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return item
+def read_one(db: Session, order_detail_id):
+    return db.query(order_details_model.OrderDetail).filter(order_details_model.OrderDetail.id == order_detail_id).first()
 
 
-def update(db: Session, item_id, request):
-    try:
-        item = db.query(model.OrderDetail).filter(model.OrderDetail.id == item_id)
-        if not item.first():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-        update_data = request.dict(exclude_unset=True)
-        item.update(update_data, synchronize_session=False)
-        db.commit()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return item.first()
+def update(db: Session, order_detail_id, order_details):
+    # Query the database for the specific OrderDetail to update
+    db_order_details = db.query(order_details_model.OrderDetail).filter(order_details_model.OrderDetail.id == order_detail_id)
+    # Extract the update data from the provided 'OrderDetail' object
+    update_data = order_details.model_dump(exclude_unset=True)
+    # Update the database record with the new data, without synchronizing the session
+    db_order_details.update(update_data, synchronize_session=False)
+    # Commit the changes to the database
+    db.commit()
+    # Return the updated OrderDetail record
+    return db_order_details.first()
 
 
-def delete(db: Session, item_id):
-    try:
-        item = db.query(model.OrderDetail).filter(model.OrderDetail.id == item_id)
-        if not item.first():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-        item.delete(synchronize_session=False)
-        db.commit()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+def delete(db: Session, order_detail_id):
+    # Query the database for the specific OrderDetail to delete
+    db_order_details = db.query(order_details_model.OrderDetail).filter(order_details_model.OrderDetail.id == order_detail_id)
+    # Delete the database record without synchronizing the session
+    db_order_details.delete(synchronize_session=False)
+    # Commit the changes to the database
+    db.commit()
+    # Return a response with a status code indicating success (204 No Content)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
