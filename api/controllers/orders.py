@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from ..models import orders as orders_model
 
 
 def create(db: Session, order):
     # Create a new instance of the Order model with the provided data
-    db_order = models.Order(
+    db_order = orders_model.Order(
         customer_name=order.customer_name,
         description=order.description
     )
@@ -20,16 +20,16 @@ def create(db: Session, order):
 
 
 def read_all(db: Session):
-    return db.query(models.Order).all()
+    return db.query(orders_model.Order).all()
 
 
 def read_one(db: Session, order_id):
-    return db.query(models.Order).filter(models.Order.id == order_id).first()
+    return db.query(orders_model.Order).filter(orders_model.Order.id == order_id).first()
 
 
 def update(db: Session, order_id, order):
     # Query the database for the specific order to update
-    db_order = db.query(models.Order).filter(models.Order.id == order_id)
+    db_order = db.query(orders_model.Order).filter(orders_model.Order.id == order_id)
     # Extract the update data from the provided 'order' object
     update_data = order.model_dump(exclude_unset=True)
     # Update the database record with the new data, without synchronizing the session
@@ -42,7 +42,7 @@ def update(db: Session, order_id, order):
 
 def delete(db: Session, order_id):
     # Query the database for the specific order to delete
-    db_order = db.query(models.Order).filter(models.Order.id == order_id)
+    db_order = db.query(orders_model.Order).filter(orders_model.Order.id == order_id)
     # Delete the database record without synchronizing the session
     db_order.delete(synchronize_session=False)
     # Commit the changes to the database

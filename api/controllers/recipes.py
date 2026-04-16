@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from ..models import recipes as recipes_model
 
 
 def create(db: Session, recipe):
     # Create a new instance of the Order model with the provided data
-    db_recipe = models.Recipe(
+    db_recipe = recipes_model.Recipe(
         amount=recipe.amount,
         sandwich_id=recipe.sandwich_id,
         resource_id=recipe.resource_id
@@ -21,16 +21,16 @@ def create(db: Session, recipe):
 
 
 def read_all(db: Session):
-    return db.query(models.Recipe).all()
+    return db.query(recipes_model.Recipe).all()
 
 
 def read_one(db: Session, recipe_id):
-    return db.query(models.Recipe).filter(models.Recipe.id == recipe_id).first()
+    return db.query(recipes_model.Recipe).filter(recipes_model.Recipe.id == recipe_id).first()
 
 
 def update(db: Session, recipe_id, recipe):
     # Query the database for the specific Recipe to update
-    db_recipe = db.query(models.Recipe).filter(models.Recipe.id == recipe_id)
+    db_recipe = db.query(recipes_model.Recipe).filter(recipes_model.Recipe.id == recipe_id)
     # Extract the update data from the provided 'Recipe' object
     update_data = recipe.model_dump(exclude_unset=True)
     # Update the database record with the new data, without synchronizing the session
@@ -43,7 +43,7 @@ def update(db: Session, recipe_id, recipe):
 
 def delete(db: Session, recipe_id):
     # Query the database for the specific Recipe to delete
-    db_recipe = db.query(models.Recipe).filter(models.Recipe.id == recipe_id)
+    db_recipe = db.query(recipes_model.Recipe).filter(recipes_model.Recipe.id == recipe_id)
     # Delete the database record without synchronizing the session
     db_recipe.delete(synchronize_session=False)
     # Commit the changes to the database
