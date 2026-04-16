@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from ..models import sandwiches as sandwiches_model
 
 
 def create(db: Session, sandwich):
     # Create a new instance of the Sandwich model with the provided data
-    db_sandwiches = models.Sandwich(
+    db_sandwiches = sandwiches_model.Sandwich(
         sandwich_name=sandwich.sandwich_name,
         price=sandwich.price
     )
@@ -19,14 +19,14 @@ def create(db: Session, sandwich):
     return db_sandwiches
 
 def read_all(db: Session):
-    return db.query(models.Sandwich).all()
+    return db.query(sandwiches_model.Sandwich).all()
 
 def read_one(db: Session, sandwich_id):
-    return db.query(models.Sandwich).filter(models.Sandwich.id == sandwich_id).first()
+    return db.query(sandwiches_model.Sandwich).filter(sandwiches_model.Sandwich.id == sandwich_id).first()
 
 def update(db: Session, sandwich_id, sandwich):
     # Query the database for the specific Sandwich to update
-    db_sandwiches = db.query(models.Sandwich).filter(models.Sandwich.id == sandwich_id)
+    db_sandwiches = db.query(sandwiches_model.Sandwich).filter(sandwiches_model.Sandwich.id == sandwich_id)
     # Extract the update data from the provided 'Sandwich' object
     update_data = sandwich.model_dump(exclude_unset=True)
     # Update the database record with the new data, without synchronizing the session
@@ -39,7 +39,7 @@ def update(db: Session, sandwich_id, sandwich):
 
 def delete(db: Session, sandwich_id):
     # Query the database for the specific Sandwich to delete
-    db_sandwich = db.query(models.Sandwich).filter(models.Sandwich.id == sandwich_id)
+    db_sandwich = db.query(sandwiches_model.Sandwich).filter(sandwiches_model.Sandwich.id == sandwich_id)
     # Delete the database record without synchronizing the session
     db_sandwich.delete(synchronize_session=False)
     # Commit the changes to the database

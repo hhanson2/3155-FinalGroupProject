@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from ..models import resources as resources_model
 
 
 def create(db: Session, resource):
     # Create a new instance of the resource model with the provided data
-    db_resource = models.Resource(
+    db_resource = resources_model.Resource(
         item=resource.item,
         amount=resource.amount
     )
@@ -20,16 +20,16 @@ def create(db: Session, resource):
 
 
 def read_all(db: Session):
-    return db.query(models.Resource).all()
+    return db.query(resources_model.Resource).all()
 
 
 def read_one(db: Session, resource_id):
-    return db.query(models.Resource).filter(models.Resource.id == resource_id).first()
+    return db.query(resources_model.Resource).filter(resources_model.Resource.id == resource_id).first()
 
 
 def update(db: Session, resource_id, resource):
     # Query the database for the specific resource to update
-    db_resource = db.query(models.Resource).filter(models.Resource.id == resource_id)
+    db_resource = db.query(resources_model.Resource).filter(resources_model.Resource.id == resource_id)
     # Extract the update data from the provided 'resource' object
     update_data = resource.model_dump(exclude_unset=True)
     # Update the database record with the new data, without synchronizing the session
@@ -42,7 +42,7 @@ def update(db: Session, resource_id, resource):
 
 def delete(db: Session, resource_id):
     # Query the database for the specific resource to delete
-    db_resource = db.query(models.Resource).filter(models.Resource.id == resource_id)
+    db_resource = db.query(resources_model.Resource).filter(resources_model.Resource.id == resource_id)
     # Delete the database record without synchronizing the session
     db_resource.delete(synchronize_session=False)
     # Commit the changes to the database
