@@ -1,10 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
 
-
 class IngredientBase(BaseModel):
     name: str
-    unit: str
+    amount: int
 
 
 class IngredientCreate(IngredientBase):
@@ -13,11 +12,8 @@ class IngredientCreate(IngredientBase):
 
 class IngredientUpdate(BaseModel):
     name: Optional[str] = None
-    unit: Optional[str] = None
+    amount: Optional[int] = None
 
 
 class Ingredient(IngredientBase):
-    id: int
-
-    class ConfigDict:
-        from_attributes = True
+    pass

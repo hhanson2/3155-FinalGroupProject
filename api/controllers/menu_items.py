@@ -2,12 +2,27 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import menu_items as menu_items_model
 
-def create(db: Session, menu_items):
+def create(db: Session, menu_item):
+
+    ingredientsString = ""
+    for ingredient in menu_item.ingredients:
+        name = ingredient.name
+        amount = ingredient.amount
+
+        stringToAdd = name + ":" + str(amount) + ","
+
+        ingredientsString += stringToAdd
+
+    ingredientsString = ingredientsString[:-1]
+
     # Create a new instance of the OrderDetail model with the provided data
     db_menu_items = menu_items_model.MenuItem(
-        name=menu_items.name,
-        order_id=menu_items.order_id,
-        sandwich_id=menu_items.sandwich_id
+        name=menu_item.name,
+        description=menu_item.description,
+        price=menu_item.price,
+        calories=menu_item.calories,
+        food_category=menu_item.food_category,
+        ingredients= ingredientsString
     )
     # Add the newly created OrderDetail object to the database session
     db.add(db_menu_items)
@@ -22,26 +37,39 @@ def read_all(db: Session):
     return db.query(menu_items_model.MenuItem).all()
 
 
-def read_one(db: Session, menuItemID):
-    return db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID).first()
+def read_one(db: Session, item_id):
+    return db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == item_id).first()
 
 
-def update(db: Session, menuItemID, item):
+def update(db: Session, item_id, menu_item):
     # Query the database for the specific order to update
-    db_menu_item = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID)
-    # Extract the update data from the provided 'order' object
-    update_data = item.model_dump(exclude_unset=True)
-    # Update the database record with the new data, without synchronizing the session
+    db_menu_item = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == item_id)
+
+    ingredientsString = ""
+    for ingredient in menu_item.ingredients:
+        name = ingredient.name
+        amount = ingredient.amount
+        stringToAdd = name + ":" + str(amount) + ","
+        ingredientsString += stringToAdd
+    ingredientsString = ingredientsString[:-1]
+
+    update_data = {
+        "name":          menu_item.name,
+        "description":   menu_item.description,
+        "price":         menu_item.price,
+        "calories":      menu_item.calories,
+        "food_category": menu_item.food_category,
+        "ingredients":   ingredientsString
+    }
+
     db_menu_item.update(update_data, synchronize_session=False)
-    # Commit the changes to the database
     db.commit()
-    # Return the updated order record
     return db_menu_item.first()
 
 
-def delete(db: Session, menuItemID):
+def delete(db: Session, item_id):
     # Query the database for the specific order to delete
-    db_menu_item = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID)
+    db_menu_item = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == item_id)
     # Delete the database record without synchronizing the session
     db_menu_item.delete(synchronize_session=False)
     # Commit the changes to the database
