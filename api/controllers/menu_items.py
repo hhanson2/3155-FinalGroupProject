@@ -26,24 +26,24 @@ def read_one(db: Session, menuItemID):
     return db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID).first()
 
 
-def update(db: Session, menuItemID, order):
+def update(db: Session, menuItemID, item):
     # Query the database for the specific order to update
-    db_order = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID)
+    db_menu_item = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID)
     # Extract the update data from the provided 'order' object
-    update_data = order.model_dump(exclude_unset=True)
+    update_data = item.model_dump(exclude_unset=True)
     # Update the database record with the new data, without synchronizing the session
-    db_order.update(update_data, synchronize_session=False)
+    db_menu_item.update(update_data, synchronize_session=False)
     # Commit the changes to the database
     db.commit()
     # Return the updated order record
-    return db_order.first()
+    return db_menu_item.first()
 
 
 def delete(db: Session, menuItemID):
     # Query the database for the specific order to delete
-    db_order = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID)
+    db_menu_item = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == menuItemID)
     # Delete the database record without synchronizing the session
-    db_order.delete(synchronize_session=False)
+    db_menu_item.delete(synchronize_session=False)
     # Commit the changes to the database
     db.commit()
     # Return a response with a status code indicating success (204 No Content)

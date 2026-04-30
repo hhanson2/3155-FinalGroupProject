@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 class MenuItemsBase(BaseModel):
+    name: str
     pass
 
 class MenuItemsCreate(MenuItemsBase):
@@ -9,6 +10,7 @@ class MenuItemsCreate(MenuItemsBase):
     price: float
     calories: int
     food_category: str
+
 
 class MenuItemsUpdate(BaseModel):
     description: Optional[str] = None
