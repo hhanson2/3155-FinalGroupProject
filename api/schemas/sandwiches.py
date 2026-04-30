@@ -5,11 +5,11 @@ from pydantic import BaseModel
 
 class SandwichBase(BaseModel):
     sandwich_name: str
-    price: float
+    pass
 
 
 class SandwichCreate(SandwichBase):
-    pass
+    price: float
 
 
 class SandwichUpdate(BaseModel):
@@ -18,7 +18,4 @@ class SandwichUpdate(BaseModel):
 
 
 class Sandwich(SandwichBase):
-    id: int
-
-    class ConfigDict:
-        from_attributes = True
+    price: float

@@ -1,15 +1,14 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ResourceBase(BaseModel):
     item: str
-    amount: int
-
+    pass
 
 class ResourceCreate(ResourceBase):
-    pass
+   amount: int
 
 
 class ResourceUpdate(BaseModel):
@@ -19,6 +18,7 @@ class ResourceUpdate(BaseModel):
 
 class Resource(ResourceBase):
     id: int
+    item: str
+    amount: int
 
-    class ConfigDict:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
