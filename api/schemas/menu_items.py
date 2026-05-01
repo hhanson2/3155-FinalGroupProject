@@ -11,7 +11,6 @@ class MenuItemsCreate(MenuItemsBase):
     price: float
     calories: int
     food_category: str
-    ingredients: list[IngredientCreate]
 
 
 
@@ -21,7 +20,6 @@ class MenuItemsUpdate(BaseModel):
     price: Optional[float] = None
     calories: Optional[int] = None
     food_category: Optional[str] = None
-    ingredients: Optional[list[IngredientCreate]] = None
 
 
 class MenuItems(MenuItemsBase):
@@ -30,7 +28,6 @@ class MenuItems(MenuItemsBase):
     price: float
     calories: int
     food_category: str
-    ingredients: str
 
     class Config:
         from_attributes = True

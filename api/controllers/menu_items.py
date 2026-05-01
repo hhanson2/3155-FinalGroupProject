@@ -4,16 +4,6 @@ from ..models import menu_items as menu_items_model
 
 def create(db: Session, menu_item):
 
-    ingredientsString = ""
-    for ingredient in menu_item.ingredients:
-        name = ingredient.name
-        amount = ingredient.amount
-
-        stringToAdd = name + ":" + str(amount) + ","
-
-        ingredientsString += stringToAdd
-
-    ingredientsString = ingredientsString[:-1]
 
     # Create a new instance of the OrderDetail model with the provided data
     db_menu_items = menu_items_model.MenuItem(
@@ -21,8 +11,7 @@ def create(db: Session, menu_item):
         description=menu_item.description,
         price=menu_item.price,
         calories=menu_item.calories,
-        food_category=menu_item.food_category,
-        ingredients= ingredientsString
+        food_category=menu_item.food_category
     )
     # Add the newly created OrderDetail object to the database session
     db.add(db_menu_items)
@@ -45,21 +34,20 @@ def update(db: Session, item_id, menu_item):
     # Query the database for the specific order to update
     db_menu_item = db.query(menu_items_model.MenuItem).filter(menu_items_model.MenuItem.id == item_id)
 
-    ingredientsString = ""
-    for ingredient in menu_item.ingredients:
-        name = ingredient.name
-        amount = ingredient.amount
-        stringToAdd = name + ":" + str(amount) + ","
-        ingredientsString += stringToAdd
-    ingredientsString = ingredientsString[:-1]
+    # ingredientsString = ""
+    # for ingredient in menu_item.ingredients:
+    #     name = ingredient.name
+    #     amount = ingredient.amount
+    #     stringToAdd = name + ":" + str(amount) + ","
+    #     ingredientsString += stringToAdd
+    # ingredientsString = ingredientsString[:-1]
 
     update_data = {
         "name":          menu_item.name,
         "description":   menu_item.description,
         "price":         menu_item.price,
         "calories":      menu_item.calories,
-        "food_category": menu_item.food_category,
-        "ingredients":   ingredientsString
+        "food_category": menu_item.food_category
     }
 
     db_menu_item.update(update_data, synchronize_session=False)
