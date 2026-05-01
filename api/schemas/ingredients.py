@@ -5,15 +5,5 @@ class IngredientBase(BaseModel):
     name: str
     amount: int
 
-
-class IngredientCreate(IngredientBase):
-    pass
-
-
-class IngredientUpdate(BaseModel):
-    name: Optional[str] = None
-    amount: Optional[int] = None
-
-
 class Ingredient(IngredientBase):
     pass

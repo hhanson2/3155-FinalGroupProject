@@ -4,11 +4,22 @@ from ..models import recipes as recipes_model
 
 
 def create(db: Session, recipe):
+
+    ingredientsString = ""
+    for ingredient in recipe.ingredients:
+        name = ingredient.name
+        amount = ingredient.amount
+
+        stringToAdd = name + ":" + str(amount) + ","
+
+        ingredientsString += stringToAdd
+
+    ingredientsString = ingredientsString[:-1]
     # Create a new instance of the Order model with the provided data
     db_recipe = recipes_model.Recipe(
-        amount=recipe.amount,
-        sandwich_id=recipe.sandwich_id,
-        resource_id=recipe.resource_id
+        menu_item_id= recipe.menu_item_id,
+        ingredients= ingredientsString,
+        instructions= recipe.instructions
     )
     # Add the newly created Recipe object to the database session
     db.add(db_recipe)
@@ -29,17 +40,26 @@ def read_one(db: Session, recipe_id):
 
 
 def update(db: Session, recipe_id, recipe):
-    # Query the database for the specific Recipe to update
+    # Query the database for the specific order to update
     db_recipe = db.query(recipes_model.Recipe).filter(recipes_model.Recipe.id == recipe_id)
-    # Extract the update data from the provided 'Recipe' object
-    update_data = recipe.model_dump(exclude_unset=True)
-    # Update the database record with the new data, without synchronizing the session
-    db_recipe.update(update_data, synchronize_session=False)
-    # Commit the changes to the database
-    db.commit()
-    # Return the updated Recipe record
-    return db_recipe.first()
 
+    ingredientsString = ""
+    for ingredient in recipe.ingredients:
+        name = ingredient.name
+        amount = ingredient.amount
+        stringToAdd = name + ":" + str(amount) + ","
+        ingredientsString += stringToAdd
+    ingredientsString = ingredientsString[:-1]
+
+    update_data = {
+        "menu_item_id": recipe.menu_item_id,
+        "ingredients": ingredientsString,
+        "instructions":   recipe.instructions
+    }
+
+    db_recipe.update(update_data, synchronize_session=False)
+    db.commit()
+    return db_recipe.first()
 
 def delete(db: Session, recipe_id):
     # Query the database for the specific Recipe to delete

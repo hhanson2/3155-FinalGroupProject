@@ -1,6 +1,5 @@
 from typing import Optional
 from pydantic import BaseModel
-from .ingredients import IngredientCreate
 
 class MenuItemsBase(BaseModel):
     name: str
