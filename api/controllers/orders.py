@@ -1,13 +1,33 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func, DATETIME
+from datetime import date
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as orders_model
+from ..models import promotions as promotions_model
+import random
 
 
 def create(db: Session, order):
+    promotion_id = None
+    if order.promotional_code:
+        promotion = db.query(promotions_model.Promotion) \
+            .filter(promotions_model.Promotion.code == order.promotional_code) \
+            .filter(promotions_model.Promotion.expiration_date >= date.today()) \
+            .first()
+
+        if promotion is None:
+            raise HTTPException(status_code=400, detail="Invalid or expired promotional code")
+
+        promotion_id = promotion.id  # extract the integer ID
     # Create a new instance of the Order model with the provided data
     db_order = orders_model.Order(
-        customer_name=order.customer_name,
-        description=order.description
+        customer_id=order.customer_id,
+        description=order.description,
+        order_date=func.now(),
+        tracking_number=random.randint(1, 1000),
+        promotion_id=promotion_id,
+        status="New Order",
+        total_price=0.0
     )
     # Add the newly created Order object to the database session
     db.add(db_order)
@@ -49,3 +69,12 @@ def delete(db: Session, order_id):
     db.commit()
     # Return a response with a status code indicating success (204 No Content)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def read_revenue_of_day(db: Session, aDate: date):
+    revenue = db.query(func.sum(orders_model.Order.total_price))\
+                .filter(func.date(orders_model.Order.order_date) == aDate)
+
+    if revenue is None:
+        raise HTTPException(status_code=404, detail="No revenue found for this date")
+
+    return {"date": date, "total_revenue": revenue}
