@@ -37,3 +37,6 @@ def delete(db: Session, review_id):
     db_review.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def read_low_rated(db: Session):
+    return db.query(reviews_model.Review).filter(reviews_model.Review.score < 5).all()

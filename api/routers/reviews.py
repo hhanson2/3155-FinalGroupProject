@@ -19,6 +19,9 @@ def create(request: schema.ReviewCreate, db: Session = Depends(get_db)):
 def read_all(db: Session = Depends(get_db)):
     return controller.read_all(db)
 
+@router.get("/low-rated/", response_model=list[schema.Review])
+def read_low_rated(db: Session = Depends(get_db)):
+    return controller.read_low_rated(db)
 
 @router.get("/{review_id}", response_model=schema.Review)
 def read_one(review_id: int, db: Session = Depends(get_db)):
