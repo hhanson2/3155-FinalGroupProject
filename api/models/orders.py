@@ -11,7 +11,7 @@ class Order(Base):
     customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
-    promotion_id = Column(Integer, ForeignKey('promotions.id'), nullable=False)
+    promotion_id = Column(Integer, ForeignKey('promotions.id'), nullable=True)
     tracking_number = Column(String(100), nullable=False)
     status = Column(String(100), nullable=False)
     total_price = Column(DECIMAL(10,2), nullable=False)
