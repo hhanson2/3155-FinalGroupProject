@@ -1,5 +1,5 @@
 from . import (orders, order_details, recipes,
-               resources, sandwiches, menu_items,
+               resources, menu_items,
                customers, promotions,
                 reviews
                )
@@ -31,4 +31,3 @@ def index():
     resources.Base.metadata.create_all(engine)
     menu_items.Base.metadata.create_all(engine)
     reviews.Base.metadata.create_all(engine)
-    sandwiches.Base.metadata.create_all(engine)

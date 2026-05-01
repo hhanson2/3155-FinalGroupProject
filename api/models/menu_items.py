@@ -11,4 +11,6 @@ class MenuItem(Base):
     price = Column(DECIMAL)
     calories = Column(Integer)
     food_category = Column(String(100))
-    ingredients = Column(String(250))
+
+    order_details = relationship("OrderDetail", back_populates="menu_items")
+    recipes = relationship("Recipe", back_populates="menu_item")
