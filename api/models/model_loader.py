@@ -20,6 +20,7 @@ def drop_tables():
         conn.execute(text("DROP TABLE IF EXISTS menu_items"))
         conn.execute(text("DROP TABLE IF EXISTS reviews"))
         conn.execute(text("DROP TABLE IF EXISTS sandwiches"))
+        conn.execute(text("DROP TABLE IF EXISTS payment_methods"))
         conn.execute(text("SET FOREIGN_KEY_CHECKS=1"))
 
 def index():

@@ -9,6 +9,7 @@ class PaymentMethod(Base):
     id              = Column(Integer,     primary_key=True, index=True, autoincrement=True)
     customer_id     = Column(Integer,     ForeignKey("customers.id"), nullable=False)
     type            = Column(String(50),  nullable=False)
-    expiry_date     = Column(String(7),   nullable=True)
+    expiry_date     = Column(String(7),   nullable=False)
+    card_number     = Column(String(15), nullable=False)
 
     customer = relationship("Customer", back_populates="payment_methods")
