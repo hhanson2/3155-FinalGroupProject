@@ -15,7 +15,7 @@ class Order(Base):
     tracking_number = Column(String(100), nullable=False)
     status = Column(String(100), nullable=False)
     total_price = Column(DECIMAL(10,2), nullable=False)
-
+    order_type = Column(String(50), nullable=False, server_default="dine-in")
     order_details = relationship("OrderDetail", back_populates="order")
     customer = relationship("Customer", back_populates="orders")
     reviews = relationship("Review", back_populates="order")

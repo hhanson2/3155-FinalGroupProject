@@ -27,8 +27,9 @@ def create(db: Session, order):
         tracking_number=random.randint(1, 1000),
         promotion_id=promotion_id,
         status="New Order",
-        total_price=0.0
-    )
+        total_price=0.0,
+        order_type = order.order_type or "dine-in"
+     )
     # Add the newly created Order object to the database session
     db.add(db_order)
     # Commit the changes to the database
@@ -78,3 +79,9 @@ def read_revenue_of_day(db: Session, aDate: date):
         raise HTTPException(status_code=404, detail="No revenue found for this date")
 
     return {"date": date, "total_revenue": revenue}
+
+def read_by_tracking_number(db: Session, tracking_number: int):
+    order = db.query(orders_model.Order).filter(orders_model.Order.tracking_number == tracking_number).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
