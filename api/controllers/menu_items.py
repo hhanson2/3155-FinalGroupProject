@@ -64,3 +64,7 @@ def delete(db: Session, item_id):
     db.commit()
     # Return a response with a status code indicating success (204 No Content)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def read_by_category(db: Session, food_category: str):
+    return db.query(menu_items_model.MenuItem)\
+        .filter(menu_items_model.MenuItem.food_category == food_category).all()
