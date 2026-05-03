@@ -1,21 +1,22 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import order_details as order_details_model
+from ..controllers import orders as orders_controller
+
 
 def create(db: Session, order_details):
-    # Create a new instance of the OrderDetail model with the provided data
     db_order_details = order_details_model.OrderDetail(
         amount=order_details.amount,
         order_id=order_details.order_id,
-        sandwich_id=order_details.sandwich_id
+        menu_item_id=order_details.menu_item_id
     )
-    # Add the newly created OrderDetail object to the database session
     db.add(db_order_details)
-    # Commit the changes to the database
     db.commit()
-    # Refresh the OrderDetail object to ensure it reflects the current state in the database
     db.refresh(db_order_details)
-    # Return the newly created OrderDetail object
+
+    # Update total price on the order
+    orders_controller.update_total_price(db, order_id=order_details.order_id)
+
     return db_order_details
 
 

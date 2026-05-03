@@ -12,7 +12,7 @@ router = APIRouter(
 
 @router.post("/", response_model=schema.OrderDetail)
 def create(request: schema.OrderDetailCreate, db: Session = Depends(get_db)):
-    return controller.create(db=db, request=request)
+    return controller.create(db=db, order_details=request)
 
 
 @router.get("/", response_model=list[schema.OrderDetail])
@@ -27,7 +27,7 @@ def read_one(item_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{item_id}", response_model=schema.OrderDetail)
 def update(item_id: int, request: schema.OrderDetailUpdate, db: Session = Depends(get_db)):
-    return controller.update(db=db, request=request, item_id=item_id)
+    return controller.update(db=db, order_details=request, item_id=item_id)
 
 
 @router.delete("/{item_id}")

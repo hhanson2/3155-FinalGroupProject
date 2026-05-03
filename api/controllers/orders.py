@@ -85,3 +85,22 @@ def read_by_tracking_number(db: Session, tracking_number: int):
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     return order
+
+
+def update_total_price(db: Session, order_id: int):
+    from ..models import order_details as order_details_model
+    from ..models import menu_items as menu_items_model
+
+    order_details = db.query(order_details_model.OrderDetail) \
+        .filter(order_details_model.OrderDetail.order_id == order_id).all()
+
+    total = 0.0
+    for detail in order_details:
+        menu_item = db.query(menu_items_model.MenuItem) \
+            .filter(menu_items_model.MenuItem.id == detail.menu_item_id).first()
+        if menu_item:
+            total += float(menu_item.price) * detail.amount
+
+    db.query(orders_model.Order).filter(orders_model.Order.id == order_id) \
+        .update({"total_price": total}, synchronize_session=False)
+    db.commit()
