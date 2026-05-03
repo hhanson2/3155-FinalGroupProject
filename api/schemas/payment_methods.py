@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class PaymentMethodBase(BaseModel):
     customer_id: int
@@ -22,5 +22,4 @@ class PaymentMethodUpdate(BaseModel):
 class PaymentMethod(PaymentMethodBase):
     pass
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
