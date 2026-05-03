@@ -24,6 +24,10 @@ def read_all(db: Session = Depends(get_db)):
 def read_by_tracking_number(tracking_number: int, db: Session = Depends(get_db)):
     return controller.read_by_tracking_number(db, tracking_number=tracking_number)
 
+@router.get("/revenue/{aDate}")
+def read_revenue_of_day(aDate: date, db: Session = Depends(get_db)):
+    return controller.read_revenue_of_day(db=db, aDate=aDate)
+
 @router.get("/{item_id}", response_model=schema.Order)
 def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, order_id=item_id)
@@ -38,6 +42,3 @@ def update(item_id: int, request: schema.OrderUpdate, db: Session = Depends(get_
 def delete(item_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, order_id=item_id)
 
-@router.get("/{date}", response_model=schema.Order)
-def read_revenue_of_day(aDate: date, db: Session = Depends(get_db)):
-    return controller.read_revenue_of_day(db=db, aDate=aDate)

@@ -73,12 +73,13 @@ def delete(db: Session, order_id):
 
 def read_revenue_of_day(db: Session, aDate: date):
     revenue = db.query(func.sum(orders_model.Order.total_price))\
-                .filter(func.date(orders_model.Order.order_date) == aDate)
+                .filter(func.date(orders_model.Order.order_date) == aDate)\
+                .scalar()
 
     if revenue is None:
-        raise HTTPException(status_code=404, detail="No revenue found for this date")
+        revenue = 0.0
 
-    return {"date": date, "total_revenue": revenue}
+    return {"date": aDate, "total_revenue": float(revenue)}
 
 def read_by_tracking_number(db: Session, tracking_number: int):
     order = db.query(orders_model.Order).filter(orders_model.Order.tracking_number == tracking_number).first()
