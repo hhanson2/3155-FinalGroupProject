@@ -105,3 +105,10 @@ def update_total_price(db: Session, order_id: int):
     db.query(orders_model.Order).filter(orders_model.Order.id == order_id) \
         .update({"total_price": total}, synchronize_session=False)
     db.commit()
+
+
+def read_by_date_range(db: Session, start_date: date, end_date: date):
+    return db.query(orders_model.Order) \
+        .filter(func.date(orders_model.Order.order_date) >= start_date) \
+        .filter(func.date(orders_model.Order.order_date) <= end_date) \
+        .all()

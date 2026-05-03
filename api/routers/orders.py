@@ -20,6 +20,10 @@ def create(request: schema.OrderCreate, db: Session = Depends(get_db)):
 def read_all(db: Session = Depends(get_db)):
     return controller.read_all(db)
 
+@router.get("/range/{start_date}/{end_date}", response_model=list[schema.Order])
+def read_by_date_range(start_date: date, end_date: date, db: Session = Depends(get_db)):
+    return controller.read_by_date_range(db, start_date=start_date, end_date=end_date)
+
 @router.get("/track/{tracking_number}", response_model=schema.Order)
 def read_by_tracking_number(tracking_number: int, db: Session = Depends(get_db)):
     return controller.read_by_tracking_number(db, tracking_number=tracking_number)
