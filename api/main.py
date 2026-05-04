@@ -18,8 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# model_loader.drop_tables()
+model_loader.drop_tables()
 model_loader.index()
+model_loader.populate()
 indexRoute.load_routes(app)
 
 

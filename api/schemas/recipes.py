@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from .ingredients import Ingredient
 
 
@@ -22,5 +22,5 @@ class Recipe(RecipeBase):
     id: int
     ingredients: str
     pass
-    class ConfigDict:
-        from_attributes = True
+
+    model_config = ConfigDict(from_attributes=True)

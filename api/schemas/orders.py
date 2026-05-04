@@ -12,7 +12,7 @@ class OrderBase(BaseModel):
 class OrderCreate(OrderBase):
     customer_id: int
     description: Optional[str] = None
-    promotional_code:  Optional[str] = None
+    promotional_code:  Optional[str] = "None"
     order_type: Optional[str] = "dine-in"  # takeout, delivery, dine-in
 
 
